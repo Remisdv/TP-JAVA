@@ -12,14 +12,13 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 /**
- * Fenêtre principale "Mon application".
- * Orchestre l'interaction utilisateur avec les services métier.
+ * Fenêtre principale "Mon application"
  */
 public class Fenetre extends JFrame {
 
     private final JTextField champRepertoire = new JTextField(30);
-    private final JTextField champTexte      = new JTextField(30);
-    private final Historique historique       = new Historique();
+    private final JTextField champTexte = new JTextField(30);
+    private final Historique historique = new Historique();
 
     public Fenetre() {
         configurerFenetre();
@@ -187,8 +186,8 @@ public class Fenetre extends JFrame {
         System.out.println("================================\n");
 
         String message = resultats.isEmpty()
-            ? "Aucun résultat trouvé."
-            : resultats.size() + " résultat(s) trouvé(s).\nExportés dans out.txt";
+                ? "Aucun résultat trouvé."
+                : resultats.size() + " résultat(s) trouvé(s).\nExportés dans out.txt";
 
         afficherInfo("Résultats", message);
     }

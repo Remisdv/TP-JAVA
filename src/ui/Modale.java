@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Fenêtre de dialogue modale (bloquante) pour afficher infos ou erreurs.
- * Pattern cours : JDialog(frame, true) = bloquant.
+ * Fenêtre de dialogue modale (bloquante) pour afficher des info ou erreur.
  */
 public class Modale extends JDialog {
 
