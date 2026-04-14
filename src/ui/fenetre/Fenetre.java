@@ -1,29 +1,33 @@
-package ui;
+package ui.fenetre;
 
 import export.ExportService;
 import history.Historique;
 import model.Saisie;
 import search.RechercheForkJoin;
+import ui.Modale;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 /**
- * Fenêtre principale "Mon application"
+ * Fenêtre principale "Mon application".
+ * Orchestre l'interaction utilisateur avec les services métier.
  */
 public class Fenetre extends JFrame {
 
-    private final JTextField champRepertoire = new JTextField(30);
-    private final JTextField champTexte = new JTextField(30);
-    private final Historique historique = new Historique();
+    private final FormulaireFenetre formulaire;
+    private final MenuFenetre menu;
+    private final Historique historique;
 
     public Fenetre() {
+        this.historique = new Historique();
+        this.formulaire = new FormulaireFenetre();
+        this.menu = new MenuFenetre();
+
         configurerFenetre();
-        creerMenu();
-        creerFormulaire();
+        brancherActions();
     }
 
     /**
@@ -35,69 +39,23 @@ public class Fenetre extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+
+        // Ajouter le menu
+        this.setJMenuBar(menu.creerMenuBar());
+
+        // Ajouter le formulaire
+        this.getContentPane().add(formulaire.creerPanel());
+
         this.setVisible(true);
     }
 
     /**
-     * Crée le menu "Application" avec Retour et Quitter.
+     * Branche les actions (lambdas) sur les éléments UI.
      */
-    private void creerMenu() {
-        JMenuBar menuBar = new JMenuBar();
-        this.setJMenuBar(menuBar);
-
-        JMenu menu = new JMenu("Application");
-        menuBar.add(menu);
-
-        JMenuItem itemRetour = new JMenuItem("Retour");
-        itemRetour.addActionListener(e -> retournerEnArriere());
-
-        JMenuItem itemQuitter = new JMenuItem("Quitter");
-        itemQuitter.addActionListener(e -> quitter());
-
-        menu.add(itemRetour);
-        menu.addSeparator();
-        menu.add(itemQuitter);
-    }
-
-    /**
-     * Crée le formulaire avec les champs et le bouton Appliquer.
-     */
-    private void creerFormulaire() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-
-        ajouterChamp(panel, "Répertoire :", champRepertoire, 0);
-        ajouterChamp(panel, "Texte recherché :", champTexte, 1);
-
-        JButton boutonAppliquer = new JButton("Appliquer");
-        boutonAppliquer.addActionListener(e -> appliquer());
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(boutonAppliquer, gbc);
-
-        this.getContentPane().add(panel);
-    }
-
-    /**
-     * Ajoute un label + champ de saisie au formulaire.
-     */
-    private void ajouterChamp(JPanel panel, String label, JTextField champ, int ligne) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        gbc.gridx = 0;
-        gbc.gridy = ligne;
-        gbc.weightx = 0;
-        panel.add(new JLabel(label), gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 1;
-        panel.add(champ, gbc);
+    private void brancherActions() {
+        menu.getItemRetour().addActionListener(e -> retournerEnArriere());
+        menu.getItemQuitter().addActionListener(e -> quitter());
+        formulaire.getBoutonAppliquer().addActionListener(e -> appliquer());
     }
 
     // ─────────────────────── Actions métier ───────────────────────
@@ -113,8 +71,8 @@ public class Fenetre extends JFrame {
             return;
         }
 
-        champRepertoire.setText(precedent.getRepertoire());
-        champTexte.setText(precedent.getTexte());
+        formulaire.getChampRepertoire().setText(precedent.getRepertoire());
+        formulaire.getChampTexte().setText(precedent.getTexte());
         afficherInfo("Retour", "État restauré :\n" + precedent);
     }
 
@@ -130,8 +88,8 @@ public class Fenetre extends JFrame {
      */
     void appliquer() {
         // Récupérer et valider les saisies
-        String repertoire = champRepertoire.getText().trim();
-        String texte = champTexte.getText().trim();
+        String repertoire = formulaire.getChampRepertoire().getText().trim();
+        String texte = formulaire.getChampTexte().getText().trim();
 
         if (!validerSaisies(repertoire, texte)) {
             return;
@@ -152,6 +110,8 @@ public class Fenetre extends JFrame {
         }
     }
 
+    // ─────────────────────── Validations ───────────────────────
+
     /**
      * Valide les saisies (non vides, répertoire existant).
      */
@@ -168,6 +128,8 @@ public class Fenetre extends JFrame {
 
         return true;
     }
+
+    // ─────────────────────── Métier ───────────────────────
 
     /**
      * Lance la recherche avec Fork/Join.
@@ -186,8 +148,8 @@ public class Fenetre extends JFrame {
         System.out.println("================================\n");
 
         String message = resultats.isEmpty()
-                ? "Aucun résultat trouvé."
-                : resultats.size() + " résultat(s) trouvé(s).\nExportés dans out.txt";
+            ? "Aucun résultat trouvé."
+            : resultats.size() + " résultat(s) trouvé(s).\nExportés dans out.txt";
 
         afficherInfo("Résultats", message);
     }

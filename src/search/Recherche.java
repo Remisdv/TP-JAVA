@@ -11,14 +11,15 @@ import java.util.List;
 /**
  * Service de recherche — Pattern Singleton.
  *
- * Responsabilité unique : inspecter un fichier .java ligne par ligne.
- * (La récursivité sur les dossiers est déléguée à RechercheForkJoin)
+ * Responsabilité : inspecter un fichier .java ligne par ligne.
+ * (La récursivité sur les dossiers est pour RechercheForkJoin)
  */
 public class Recherche {
 
     private static Recherche instance;
 
-    private Recherche() {}
+    private Recherche() {
+    }
 
     public static Recherche getInstance() {
         if (instance == null) {
@@ -32,21 +33,20 @@ public class Recherche {
      * Format : nomFichier§numéroLigne
      *
      * @param cheminFichier chemin du fichier
-     * @param texteCherche texte à rechercher (case-sensitive)
+     * @param texteCherche  texte à rechercher (case-sensitive)
      * @return liste des résultats
      */
     public List<String> inspecter(String cheminFichier, String texteCherche) {
         List<String> resultats = new ArrayList<>();
 
         if (!cheminFichier.endsWith(".java")) {
-            return resultats;  // ignorer les fichiers non-.java
+            return resultats; // ignorer les fichiers non-.java
         }
 
         File fichier = new File(cheminFichier);
         try (
-            FileReader fr = new FileReader(fichier, StandardCharsets.UTF_8);
-            BufferedReader br = new BufferedReader(fr)
-        ) {
+                FileReader fr = new FileReader(fichier, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(fr)) {
             String ligne;
             int numeroLigne = 0;
 

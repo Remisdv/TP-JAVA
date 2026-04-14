@@ -1,4 +1,4 @@
-import ui.Fenetre;
+import ui.fenetre.Fenetre;
 
 import javax.swing.SwingUtilities;
 

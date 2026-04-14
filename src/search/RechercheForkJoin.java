@@ -16,8 +16,8 @@ public class RechercheForkJoin extends RecursiveTask<List<String>> {
     private final String aChercher;
 
     public RechercheForkJoin(String chemin, String aChercher) {
-        this.chemin     = chemin;
-        this.aChercher  = aChercher;
+        this.chemin = chemin;
+        this.aChercher = aChercher;
     }
 
     @Override
@@ -35,9 +35,8 @@ public class RechercheForkJoin extends RecursiveTask<List<String>> {
 
                 for (String enfant : enfants) {
                     RechercheForkJoin tache = new RechercheForkJoin(
-                        chemin + File.separator + enfant, aChercher
-                    );
-                    tache.fork();           // division (Fork)
+                            chemin + File.separator + enfant, aChercher);
+                    tache.fork(); // division (Fork)
                     sousTaches.add(tache);
                 }
 
