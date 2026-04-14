@@ -31,10 +31,6 @@ public class Recherche {
     /**
      * Inspecte un fichier .java et retourne les lignes contenant le texte cherché.
      * Format : nomFichier§numéroLigne
-     *
-     * @param cheminFichier chemin du fichier
-     * @param texteCherche  texte à rechercher (case-sensitive)
-     * @return liste des résultats
      */
     public List<String> inspecter(String cheminFichier, String texteCherche) {
         List<String> resultats = new ArrayList<>();
